@@ -29,17 +29,23 @@ namespace Global.Navigation
             //LoadingData.Instance.UpdateLoading(LoadingData.LoadingSteps.UnloadingWorld);
 
             var gameplay = SceneManager.GetSceneByName(GameManager.GameSceneName);
+            var resource = SceneManager.GetSceneByName(GameManager.ResourcesSceneName);
+
             if (gameplay.IsValid() && gameplay != SceneManager.GetActiveScene())
             {
                 var unloadScene = SceneManager.UnloadSceneAsync(gameplay);
+
                 UpdateLoadingStateAsync(/*LoadingData.LoadingSteps.UnloadingGameScene,*/ unloadScene);
+
                 await unloadScene;
             }
-            var resource = SceneManager.GetSceneByName(GameManager.ResourcesSceneName);
+
             if (resource.IsValid())
             {
                 var unloadScene = SceneManager.UnloadSceneAsync(resource);
+
                 UpdateLoadingStateAsync(/*LoadingData.LoadingSteps.UnloadingResourcesScene,*/ unloadScene);
+
                 await unloadScene;
             }
         }

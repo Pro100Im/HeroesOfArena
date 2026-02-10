@@ -10,6 +10,7 @@ namespace Game.Client
     using Game.GameResources;
     using Game.Common.Components;
     using Game.Character;
+    using Global.Network;
 
     [WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation | WorldSystemFilterFlags.ThinClientSimulation)]
     [BurstCompile]

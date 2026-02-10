@@ -9,7 +9,16 @@ namespace Menu
     public class MainMenu : MonoBehaviour
     {
         [SerializeField] private UIDocument _mainMenuDoc;
-        
+
+        public enum MainMenuState
+        {
+            MainMenuScreen,
+            DirectConnectPopUp,
+            JoinCodePopUp,
+        }
+
+        private MainMenuState _mainMenuState;
+
         private Button _quickPlayButton;
         private Button _testButton;
         private Button _exitButton;

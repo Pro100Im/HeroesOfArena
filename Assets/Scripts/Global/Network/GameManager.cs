@@ -14,6 +14,19 @@ namespace Global.Network
 {
     public class GameManager : MonoBehaviour
     {
+        public enum GlobalGameState
+        {
+            MainMenu,
+            InGame,
+            Loading,
+        }
+
+        public enum PlayerState
+        {
+            Playing,
+            Dead,
+        }
+
         public const int MaxPlayer = 16;
         public const string MainMenuSceneName = "MainMenu";
         public const string GameSceneName = "GameScene";
@@ -23,7 +36,11 @@ namespace Global.Network
 
         public static GameManager Instance { get; private set; }
 
+        private GlobalGameState _gameState;
+        private bool _mainMenuSceneLoaded;
+
         private GameConnection _gameConnection;
+
         private Task _loadingGame;
         private CancellationTokenSource _loadingGameCancel;
         private Task _loadingMainMenu;
@@ -43,7 +60,7 @@ namespace Global.Network
 
         private async void Start()
         {
-            GameSettings.Instance.MainMenuSceneLoaded = false;
+            _mainMenuSceneLoaded = false;
 
             if (SceneManager.GetActiveScene().name == "MainMenu")
             {
@@ -75,14 +92,14 @@ namespace Global.Network
 
             await ScenesLoader.LoadGameplayAsync(null, clientWorld);
 
-            GameSettings.Instance.MainMenuSceneLoaded = true;
+            _mainMenuSceneLoaded = true;
 
             cancellationToken.ThrowIfCancellationRequested();
         }
 
         public async void StartGameAsync(CreationType creationType)
         {
-            if (GameSettings.Instance.GameState != GlobalGameState.MainMenu)
+            if (_gameState != GlobalGameState.MainMenu)
             {
                 Debug.Log("[StartGameAsync] Called but in-game, cannot start while in-game!");
                 return;
@@ -130,7 +147,7 @@ namespace Global.Network
 
         private async Task StartGameAsync(CreationType creationType, CancellationToken cancellationToken)
         {
-            if (_loadingMainMenuCancel != null || GameSettings.Instance.MainMenuSceneLoaded)
+            if (_loadingMainMenuCancel != null || _mainMenuSceneLoaded)
             {
                 if (_loadingMainMenuCancel != null)
                 {
@@ -146,7 +163,7 @@ namespace Global.Network
                     }
                 }
 
-                if (GameSettings.Instance.MainMenuSceneLoaded)
+                if (_mainMenuSceneLoaded)
                     await DisconnectAndUnloadWorlds();
 
                 cancellationToken.ThrowIfCancellationRequested();
@@ -226,7 +243,7 @@ namespace Global.Network
 
         private void BeginEnteringGame()
         {
-            GameSettings.Instance.GameState = GlobalGameState.Loading;
+            _gameState = GlobalGameState.Loading;
             //LoadingData.Instance.UpdateLoading(LoadingData.LoadingSteps.StartLoading);
         }
 
@@ -354,7 +371,7 @@ namespace Global.Network
         private void FinishLoadingGame()
         {
             //LoadingData.Instance.UpdateLoading(LoadingData.LoadingSteps.LoadingDone);
-            GameSettings.Instance.GameState = GlobalGameState.InGame;
+            _gameState = GlobalGameState.InGame;
         }
 
         public async void ReturnToMainMenuAsync()
@@ -386,7 +403,7 @@ namespace Global.Network
             }
 
             //LoadingData.Instance.UpdateLoading(LoadingData.LoadingSteps.UnloadingGame);
-            GameSettings.Instance.GameState = GlobalGameState.Loading;
+            _gameState = GlobalGameState.Loading;
 
             await DisconnectAndUnloadWorlds();
 
@@ -394,7 +411,7 @@ namespace Global.Network
             Start();
 
             //LoadingData.Instance.UpdateLoading(LoadingData.LoadingSteps.BackToMainMenu);
-            GameSettings.Instance.GameState = GlobalGameState.MainMenu;
+            _gameState = GlobalGameState.MainMenu;
         }
 
         private async Task DisconnectAndUnloadWorlds()
@@ -453,43 +470,5 @@ namespace Global.Network
             Application.Quit();
 #endif
         }
-
-        //public async void StartFromBootstrapAsync(World server, World client)
-        //{
-        //    if (GameSettings.Instance.GameState != GlobalGameState.MainMenu)
-        //    {
-        //        Debug.Log($"[{nameof(StartFromBootstrapAsync)}] Must not be in-game to join game!");
-
-        //        return;
-        //    }
-        //    if (SceneManager.GetActiveScene().name == MainMenuSceneName)
-        //    {
-        //        Debug.Log($"Must not be in {MainMenuSceneName} to use [{nameof(StartFromBootstrapAsync)}]!");
-
-        //        return;
-        //    }
-
-        //    Debug.Log($"[{nameof(StartFromBootstrapAsync)}] Starting game");
-
-        //    BeginEnteringGame();
-
-        //    // The bootstrap is creating the worlds and start the connection for us,
-        //    // let's make sure the client is connected before the next step.
-        //    if (client != null)
-        //    {
-        //        await WaitForPlayerConnectionAsync();
-        //    }
-
-        //    // Load any additional scene that would be required by the Gameplay.
-        //    await ScenesLoader.LoadGameplayAsync(server, client);
-
-        //    if (client != null)
-        //    {
-        //        await WaitForGhostReplicationAsync(client);
-        //        await WaitForAttachedCameraAsync(client);
-        //    }
-
-        //    FinishLoadingGame();
-        //}
     }
 }

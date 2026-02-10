@@ -40,14 +40,14 @@ namespace Global.Network.Connection
         public const string DefaultServerAddress = "127.0.0.1";
         public const ushort DefaultServerPort = 7979;
 
-        private const string _iPAddressKey = "IPAddress";
+        private const string _ipAddressKey = "IPAddress";
         private const string _portKey = "Port";
 
         public NetworkEndpoint ConnectionEndpoint;
 
         private ConnectionSettings()
         {
-            IPAddress = PlayerPrefs.GetString(_iPAddressKey, DefaultServerAddress);
+            IPAddress = PlayerPrefs.GetString(_ipAddressKey, DefaultServerAddress);
 
             if (!NetworkEndpoint.TryParse(IPAddress, 0, out _))
                 IPAddress = DefaultServerAddress;
@@ -99,7 +99,7 @@ namespace Global.Network.Connection
 
                 _ipAddress = value;
 
-                PlayerPrefs.SetString(_iPAddressKey, value);
+                PlayerPrefs.SetString(_ipAddressKey, value);
 
                 IsNetworkEndpointValid = NetworkEndpoint.TryParse(_ipAddress, 0, out _) && ushort.TryParse(_port, out _);
             }
