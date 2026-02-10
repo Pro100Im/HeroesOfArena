@@ -4,8 +4,9 @@ using Unity.Networking.Transport;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
 using Unity.Services.Multiplayer;
+using UnityEngine;
 
-    public static class SessionExtension
+public static class SessionExtension
     {
         public static bool IsServer(this ISession session)
         {
@@ -56,6 +57,7 @@ using Unity.Services.Multiplayer;
 
             options.WithNetworkHandler(networkHandler);
 
+            Debug.Log("Looking for match...");
             //LoadingData.Instance.UpdateLoading(LoadingData.LoadingSteps.LookingForMatch);
 
             gameConnection.Session = await MultiplayerService.Instance.MatchmakeSessionAsync(match, options, cancellationToken);

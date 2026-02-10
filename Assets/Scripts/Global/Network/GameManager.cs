@@ -146,21 +146,22 @@ using UnityEngine.SceneManagement;
             }
             else if (creationType == CreationType.QuickJoin)
             {
-                GameSettings.Instance.CancellableUserInputPopUp = new AwaitableCompletionSource();
-                GameSettings.Instance.MainMenuState = MainMenuState.DirectConnectPopUp;
+                //GameSettings.Instance.CancellableUserInputPopUp = new AwaitableCompletionSource();
+                //GameSettings.Instance.MainMenuState = MainMenuState.DirectConnectPopUp;
 
-                try
-                {
-                    await GameSettings.Instance.CancellableUserInputPopUp.Awaitable;
-                }
-                catch (OperationCanceledException)
-                {
-                    return;
-                }
-                finally
-                {
-                    GameSettings.Instance.MainMenuState = MainMenuState.MainMenuScreen;
-                }
+                //try
+                //{
+                //    await GameSettings.Instance.CancellableUserInputPopUp.Awaitable;
+                //}
+                //catch (OperationCanceledException)
+                //{
+                //    Debug.LogError($"[{nameof(StartGameAsync)}] Quick Join cancelled by the user, returning to main menu.");
+                //return;
+                //}
+                //finally
+                //{
+                //    GameSettings.Instance.MainMenuState = MainMenuState.MainMenuScreen;
+                //}
             }
 
             BeginEnteringGame();
@@ -242,6 +243,7 @@ using UnityEngine.SceneManagement;
                 }
                 case (CreationType.QuickJoin):
                 {
+                    Debug.Log($"[{nameof(StartGameAsync)}] Quick joining a game.");
                     m_GameConnection = await GameConnection.JoinOrCreateMatchmakerGameAsync(cancellationToken);
 
                     break;

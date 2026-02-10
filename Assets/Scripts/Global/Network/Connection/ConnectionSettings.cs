@@ -1,9 +1,5 @@
-using System;
-using System.Runtime.CompilerServices;
 using Unity.Networking.Transport;
-using Unity.Properties;
 using UnityEngine;
-using UnityEngine.UIElements;
 
     public enum GameConnectionState
     {
@@ -13,18 +9,12 @@ using UnityEngine.UIElements;
         Matchmaking,
     }
 
-    /// <summary>
-    /// Relay or Direct connection type, set by <see cref="ServicesSettings"/>.
-    /// </summary>
     public enum ConnectionType
     {
         Relay = 0,
         Direct = 1,
     }
 
-    /// <summary>
-    /// P2P (peer to peer) or Dgs (dedicated game server) matchmaker type, set by <see cref="ServicesSettings"/>.
-    /// </summary>
     public enum MatchmakerType
     {
         P2P = 0,
@@ -38,134 +28,129 @@ using UnityEngine.UIElements;
         QuickJoin = 2,
     }
 
-    public class ConnectionSettings : INotifyBindablePropertyChanged
+    public class ConnectionSettings
     {
         public static ConnectionSettings Instance { get; private set; } = null!;
 
-        /// <summary>
-        /// This initialization is required in the Editor to avoid the instance from a previous Playmode to stay alive in the next session.
-        /// </summary>
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        static void RuntimeInitializeOnLoad() => Instance = new ConnectionSettings();
+        private static void RuntimeInitializeOnLoad() => Instance = new ConnectionSettings();
 
         public const string DefaultServerAddress = "127.0.0.1";
         public const ushort DefaultServerPort = 7979;
 
-        const string k_IPAddressKey = "IPAddress";
-        const string k_PortKey = "Port";
+        private const string _iPAddressKey = "IPAddress";
+        private const string _portKey = "Port";
 
         public NetworkEndpoint ConnectionEndpoint;
 
-        ConnectionSettings()
+        private ConnectionSettings()
         {
-            IPAddress = PlayerPrefs.GetString(k_IPAddressKey, DefaultServerAddress);
+            IPAddress = PlayerPrefs.GetString(_iPAddressKey, DefaultServerAddress);
+
             if (!NetworkEndpoint.TryParse(IPAddress, 0, out _))
                 IPAddress = DefaultServerAddress;
 
-            Port = PlayerPrefs.GetString(k_PortKey, DefaultServerPort.ToString());
+            Port = PlayerPrefs.GetString(_portKey, DefaultServerPort.ToString());
+
             if (!ushort.TryParse(Port, out _))
                 Port = DefaultServerPort.ToString();
         }
 
-        public event EventHandler<BindablePropertyChangedEventArgs> propertyChanged;
-        void Notify([CallerMemberName] string property = "") =>
-            propertyChanged?.Invoke(this, new BindablePropertyChangedEventArgs(property));
+        private GameConnectionState _gameConnectionState;
 
-        GameConnectionState m_GameConnectionState;
         public GameConnectionState GameConnectionState
         {
-            get => m_GameConnectionState;
+            get => _gameConnectionState;
             set
             {
-                if (m_GameConnectionState == value)
+                if (_gameConnectionState == value)
                     return;
-                m_GameConnectionState = value;
-                Notify(ConnectionStatusStylePropertyName);
+
+                _gameConnectionState = value;
             }
         }
-        public static readonly string ConnectionStatusStylePropertyName = nameof(ConnectionStatusStyle);
-        [CreateProperty]
-        DisplayStyle ConnectionStatusStyle =>
-            m_GameConnectionState is GameConnectionState.Connecting or GameConnectionState.Matchmaking
-                ? DisplayStyle.Flex
-                : DisplayStyle.None;
 
 
-        bool m_IsNetworkEndpointFormatValid;
-        [CreateProperty]
+        private bool _isNetworkEndpointFormatValid;
+
         public bool IsNetworkEndpointValid
         {
-            get => m_IsNetworkEndpointFormatValid;
+            get => _isNetworkEndpointFormatValid;
             set
             {
-                if (m_IsNetworkEndpointFormatValid == value)
+                if (_isNetworkEndpointFormatValid == value)
                     return;
-                m_IsNetworkEndpointFormatValid = value;
-                Notify();
+
+                _isNetworkEndpointFormatValid = value;
             }
         }
-        string m_IPAddress;
-        [CreateProperty]
+
+        private string _ipAddress;
+
         public string IPAddress
         {
-            get => m_IPAddress;
+            get => _ipAddress;
             set
             {
-                if (m_IPAddress == value)
+                if (_ipAddress == value)
                     return;
 
-                m_IPAddress = value;
-                PlayerPrefs.SetString(k_IPAddressKey, value);
-                IsNetworkEndpointValid = NetworkEndpoint.TryParse(m_IPAddress, 0, out _) && ushort.TryParse(m_Port, out _);
-                Notify();
+                _ipAddress = value;
+
+                PlayerPrefs.SetString(_iPAddressKey, value);
+
+                IsNetworkEndpointValid = NetworkEndpoint.TryParse(_ipAddress, 0, out _) && ushort.TryParse(_port, out _);
             }
         }
-        string m_Port;
-        [CreateProperty]
+
+        private string _port;
+
         public string Port
         {
-            get => m_Port;
+            get => _port;
             set
             {
-                if (m_Port == value)
+                if (_port == value)
                     return;
 
-                m_Port = value;
-                PlayerPrefs.SetString(k_PortKey, value);
-                IsNetworkEndpointValid = NetworkEndpoint.TryParse(m_IPAddress, 0, out _) && ushort.TryParse(m_Port, out _);
-                Notify();
+                _port = value;
+
+                PlayerPrefs.SetString(_portKey, value);
+
+                IsNetworkEndpointValid = NetworkEndpoint.TryParse(_ipAddress, 0, out _) && ushort.TryParse(_port, out _);
             }
         }
 
-        bool m_IsSessionCodeFormatValid;
-        [CreateProperty]
+        private bool _isSessionCodeFormatValid;
+
         public bool IsSessionCodeFormatValid
         {
-            get => m_IsSessionCodeFormatValid;
+            get => _isSessionCodeFormatValid;
             private set
             {
-                if (m_IsSessionCodeFormatValid == value)
-                    return;
-                m_IsSessionCodeFormatValid = value;
-                Notify();
-            }
-        }
-        string m_SessionCode;
-        [CreateProperty]
-        public string SessionCode
-        {
-            get => m_SessionCode;
-            set
-            {
-                if(m_SessionCode == value)
+                if (_isSessionCodeFormatValid == value)
                     return;
 
-                m_SessionCode = value;
-                IsSessionCodeFormatValid = CheckIsSessionCodeFormatValid(m_SessionCode);
-                Notify();
+                _isSessionCodeFormatValid = value;
             }
         }
-        static bool CheckIsSessionCodeFormatValid(string str)
+
+        private string _sessionCode;
+
+        public string SessionCode
+        {
+            get => _sessionCode;
+            set
+            {
+                if(_sessionCode == value)
+                    return;
+
+                _sessionCode = value;
+                IsSessionCodeFormatValid = CheckIsSessionCodeFormatValid(_sessionCode);
+            }
+        }
+
+        private static bool CheckIsSessionCodeFormatValid(string str)
         {
             if (string.IsNullOrEmpty(str) || str.Length != 6)
                 return false;
@@ -175,6 +160,7 @@ using UnityEngine.UIElements;
                 if (!char.IsLetter(c) && !char.IsNumber(c))
                     return false;
             }
+
             return true;
         }
     }
