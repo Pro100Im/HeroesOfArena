@@ -5,25 +5,16 @@ namespace Game.Client
     using Unity.Collections;
     using Unity.Entities;
     using Unity.NetCode;
-    using Unity.Transforms;
     using UnityEngine;
     using Random = Unity.Mathematics.Random;
     using Game.GameResources;
     using Game.Common.Components;
     using Game.Character;
 
-    public struct ClientJoinRequestRpc : IRpcCommand
-    {
-        public FixedString128Bytes PlayerName;
-        public bool IsSpectator;
-    }
-
     [WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation | WorldSystemFilterFlags.ThinClientSimulation)]
     [BurstCompile]
     public partial struct ClientGameSystem : ISystem
     {
-        EntityQuery m_SpectatorSpawnPointsQuery;
-
         public void OnCreate(ref SystemState state)
         {
             state.RequireForUpdate<GameResources>();
@@ -35,9 +26,6 @@ namespace Game.Client
             {
                 Random = Random.CreateFromIndex(randomSeed),
             });
-
-            m_SpectatorSpawnPointsQuery = new EntityQueryBuilder(Allocator.Temp)
-                .WithAll<SpectatorSpawnPoint, LocalToWorld>().Build(state.EntityManager);
         }
 
         public void OnUpdate(ref SystemState state)
@@ -66,30 +54,10 @@ namespace Game.Client
 
             var clientJoinRequestRpc = new ClientJoinRequestRpc();
 
-            clientJoinRequestRpc.IsSpectator = GameSettings.Instance.SpectatorToggle;
             clientJoinRequestRpc.PlayerName.CopyFromTruncated(playerName); // Prevents exceptions on long strings.
 
             state.EntityManager.SetComponentData(joinRequestEntity, clientJoinRequestRpc);
             state.EntityManager.AddComponentData(clientEntity, new NetworkStreamInGame());
-
-            // Spectator mode
-            if (GameSettings.Instance.SpectatorToggle)
-            {
-                LocalToWorld spawnPoint = default;
-
-                using var spectatorSpawnPoints = m_SpectatorSpawnPointsQuery.ToComponentDataArray<LocalToWorld>(Allocator.Temp);
-
-                if (spectatorSpawnPoints.Length > 0)
-                {
-                    ref var random = ref SystemAPI.GetSingletonRW<FixedRandom>().ValueRW;
-                    spawnPoint = spectatorSpawnPoints[random.Random.NextInt(0, spectatorSpawnPoints.Length - 1)];
-                }
-
-                var spectatorEntity = state.EntityManager.Instantiate(gameResources.SpectatorPrefab);
-
-                state.EntityManager.SetComponentData(spectatorEntity,
-                    LocalTransform.FromPositionRotation(spawnPoint.Position, spawnPoint.Rotation));
-            }
         }
 
         private void HandleCharacterSetup(ref SystemState state)
@@ -117,18 +85,6 @@ namespace Game.Client
                 //MiscUtilities.SetShadowModeInHierarchy(state.EntityManager, ecb, entity, ref childBufferLookup,
                 //    ShadowCastingMode.ShadowsOnly);
             }
-
-            //foreach (var (characterInitialized, entity) in SystemAPI
-            //             .Query<EnabledRefRW<CharacterInitialized>>()
-            //             .WithAll<Character>()
-            //             .WithDisabled<CharacterInitialized>()
-            //             .WithEntityAccess())
-            //{
-            //    //physicsCollider.ValueRW.MakeUnique(entity, ecb);
-
-            //    // Mark initialized
-            //    characterInitialized.ValueRW = true;
-            //}
         }
     }
 }

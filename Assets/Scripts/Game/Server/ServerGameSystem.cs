@@ -121,13 +121,11 @@ namespace Game.Server
                     ecb.SetComponent(playerEntity, new GhostOwner { NetworkId = ownerNetworkId.Value });
                     ecb.AppendToBuffer(rpcReceive.SourceConnection, new LinkedEntityGroup { Value = playerEntity });
 
-                    if (!request.IsSpectator)
-                    {
-                        // Request to spawn character
-                        Entity spawnCharacterRequestEntity = ecb.CreateEntity();
-                        ecb.AddComponent(spawnCharacterRequestEntity,
-                            new SpawnCharacter { ClientEntity = rpcReceive.SourceConnection, Delay = -1f });
-                    }
+                    // Request to spawn character
+                    var spawnCharacterRequestEntity = ecb.CreateEntity();
+                    ecb.AddComponent(spawnCharacterRequestEntity,
+                        new SpawnCharacter { ClientEntity = rpcReceive.SourceConnection, Delay = -1f });
+
 
                     // Remember player for connection
                     ecb.AddComponent(rpcReceive.SourceConnection, new JoinedClient { PlayerEntity = playerEntity });

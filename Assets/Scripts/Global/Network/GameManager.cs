@@ -90,62 +90,6 @@ namespace Global.Network
 
             Debug.Log($"[{nameof(StartGameAsync)}] Called with creation type '{creationType}'");
 
-            if (creationType == CreationType.Create)
-            {
-                GameSettings.Instance.CancellableUserInputPopUp = new AwaitableCompletionSource();
-                GameSettings.Instance.MainMenuState = MainMenuState.DirectConnectPopUp;
-
-                try
-                {
-                    await GameSettings.Instance.CancellableUserInputPopUp.Awaitable;
-                }
-                catch (OperationCanceledException)
-                {
-                    return;
-                }
-                finally
-                {
-                    GameSettings.Instance.MainMenuState = MainMenuState.MainMenuScreen;
-                }
-            }
-            else if (creationType == CreationType.Join)
-            {
-                GameSettings.Instance.CancellableUserInputPopUp = new AwaitableCompletionSource();
-                GameSettings.Instance.MainMenuState = MainMenuState.JoinCodePopUp;
-
-                try
-                {
-                    await GameSettings.Instance.CancellableUserInputPopUp.Awaitable;
-                }
-                catch (OperationCanceledException)
-                {
-                    return;
-                }
-                finally
-                {
-                    GameSettings.Instance.MainMenuState = MainMenuState.MainMenuScreen;
-                }
-            }
-            else if (creationType == CreationType.QuickJoin)
-            {
-                //GameSettings.Instance.CancellableUserInputPopUp = new AwaitableCompletionSource();
-                //GameSettings.Instance.MainMenuState = MainMenuState.DirectConnectPopUp;
-
-                //try
-                //{
-                //    await GameSettings.Instance.CancellableUserInputPopUp.Awaitable;
-                //}
-                //catch (OperationCanceledException)
-                //{
-                //    Debug.LogError($"[{nameof(StartGameAsync)}] Quick Join cancelled by the user, returning to main menu.");
-                //return;
-                //}
-                //finally
-                //{
-                //    GameSettings.Instance.MainMenuState = MainMenuState.MainMenuScreen;
-                //}
-            }
-
             BeginEnteringGame();
 
             _loadingGameCancel = new CancellationTokenSource();
@@ -279,44 +223,6 @@ namespace Global.Network
 
             ReturnToMainMenuAsync();
         }
-
-        //public async void StartFromBootstrapAsync(World server, World client)
-        //{
-        //    if (GameSettings.Instance.GameState != GlobalGameState.MainMenu)
-        //    {
-        //        Debug.Log($"[{nameof(StartFromBootstrapAsync)}] Must not be in-game to join game!");
-
-        //        return;
-        //    }
-        //    if (SceneManager.GetActiveScene().name == MainMenuSceneName)
-        //    {
-        //        Debug.Log($"Must not be in {MainMenuSceneName} to use [{nameof(StartFromBootstrapAsync)}]!");
-
-        //        return;
-        //    }
-
-        //    Debug.Log($"[{nameof(StartFromBootstrapAsync)}] Starting game");
-
-        //    BeginEnteringGame();
-
-        //    // The bootstrap is creating the worlds and start the connection for us,
-        //    // let's make sure the client is connected before the next step.
-        //    if (client != null)
-        //    {
-        //        await WaitForPlayerConnectionAsync();
-        //    }
-
-        //    // Load any additional scene that would be required by the Gameplay.
-        //    await ScenesLoader.LoadGameplayAsync(server, client);
-
-        //    if (client != null)
-        //    {
-        //        await WaitForGhostReplicationAsync(client);
-        //        await WaitForAttachedCameraAsync(client);
-        //    }
-
-        //    FinishLoadingGame();
-        //}
 
         private void BeginEnteringGame()
         {
@@ -482,8 +388,6 @@ namespace Global.Network
             //LoadingData.Instance.UpdateLoading(LoadingData.LoadingSteps.UnloadingGame);
             GameSettings.Instance.GameState = GlobalGameState.Loading;
 
-            GameSettings.Instance.IsPauseMenuOpen = false;
-
             await DisconnectAndUnloadWorlds();
 
             // Restart the main menu scene.
@@ -549,5 +453,43 @@ namespace Global.Network
             Application.Quit();
 #endif
         }
+
+        //public async void StartFromBootstrapAsync(World server, World client)
+        //{
+        //    if (GameSettings.Instance.GameState != GlobalGameState.MainMenu)
+        //    {
+        //        Debug.Log($"[{nameof(StartFromBootstrapAsync)}] Must not be in-game to join game!");
+
+        //        return;
+        //    }
+        //    if (SceneManager.GetActiveScene().name == MainMenuSceneName)
+        //    {
+        //        Debug.Log($"Must not be in {MainMenuSceneName} to use [{nameof(StartFromBootstrapAsync)}]!");
+
+        //        return;
+        //    }
+
+        //    Debug.Log($"[{nameof(StartFromBootstrapAsync)}] Starting game");
+
+        //    BeginEnteringGame();
+
+        //    // The bootstrap is creating the worlds and start the connection for us,
+        //    // let's make sure the client is connected before the next step.
+        //    if (client != null)
+        //    {
+        //        await WaitForPlayerConnectionAsync();
+        //    }
+
+        //    // Load any additional scene that would be required by the Gameplay.
+        //    await ScenesLoader.LoadGameplayAsync(server, client);
+
+        //    if (client != null)
+        //    {
+        //        await WaitForGhostReplicationAsync(client);
+        //        await WaitForAttachedCameraAsync(client);
+        //    }
+
+        //    FinishLoadingGame();
+        //}
     }
 }
