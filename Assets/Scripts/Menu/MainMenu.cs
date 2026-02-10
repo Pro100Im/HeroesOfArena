@@ -33,7 +33,7 @@ namespace Menu
 
         private void QuickPlay()
         {
-
+            GameManager.Instance.StartGameAsync(CreationType.QuickJoin);
         }
 
         private void Test()
