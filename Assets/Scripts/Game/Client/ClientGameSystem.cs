@@ -1,12 +1,16 @@
-using System;
-using Unity.Burst;
-using Unity.Collections;
-using Unity.Entities;
-using Unity.NetCode;
-using Unity.Transforms;
-using UnityEngine;
-using Random = Unity.Mathematics.Random;
-
+namespace Game.Client
+{
+    using System;
+    using Unity.Burst;
+    using Unity.Collections;
+    using Unity.Entities;
+    using Unity.NetCode;
+    using Unity.Transforms;
+    using UnityEngine;
+    using Random = Unity.Mathematics.Random;
+    using Game.GameResources;
+    using Game.Common.Components;
+    using Game.Character;
 
     public struct ClientJoinRequestRpc : IRpcCommand
     {
@@ -127,3 +131,4 @@ using Random = Unity.Mathematics.Random;
             }
         }
     }
+}

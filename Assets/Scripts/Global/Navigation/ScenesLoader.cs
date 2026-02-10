@@ -1,21 +1,25 @@
-﻿using System.Threading.Tasks;
+﻿using Global.Network;
+using System.Threading.Tasks;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Scenes;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-
+namespace Global.Navigation
+{
     /// <summary>
     /// This utility class is handling Unity Scenes and Subscenes loading/unloading for a gameplay session.
     /// </summary>
-    static class ScenesLoader
+    public static class ScenesLoader
     {
         public static async Task LoadGameplayAsync(World server, World client)
         {
             await LoadGameplayScenesAsync();
+
             if (server != null)
                 await WaitForAllSubScenesToLoadAsync(server/*, LoadingData.LoadingSteps.LoadServer*/);
+
             if (client != null)
                 await WaitForAllSubScenesToLoadAsync(client/*, LoadingData.LoadingSteps.LoadClient*/);
         }
@@ -40,18 +44,21 @@ using UnityEngine.SceneManagement;
             }
         }
 
-        static async Task LoadGameplayScenesAsync()
+        private static async Task LoadGameplayScenesAsync()
         {
             await LoadSceneAsync(GameManager.GameSceneName/*, LoadingData.LoadingSteps.LoadGameScene*/);
             await LoadSceneAsync(GameManager.ResourcesSceneName/*, LoadingData.LoadingSteps.LoadResourcesScene*/);
         }
 
-        static async Task LoadSceneAsync(string sceneName/*, LoadingData.LoadingSteps step*/)
+        private static async Task LoadSceneAsync(string sceneName/*, LoadingData.LoadingSteps step*/)
         {
-            if(SceneManager.GetSceneByName(sceneName).isLoaded)
+            if (SceneManager.GetSceneByName(sceneName).isLoaded)
                 return;
+
             var sceneLoading = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
+
             UpdateLoadingStateAsync(/*step,*/ sceneLoading);
+
             await sceneLoading;
         }
 
@@ -64,9 +71,11 @@ using UnityEngine.SceneManagement;
 
             using var scenesQuery = world.EntityManager.CreateEntityQuery(ComponentType.ReadOnly<SceneReference>());
             using var scenesLeftToLoad = scenesQuery.ToEntityListAsync(Allocator.Persistent, out var handle);
+
             handle.Complete();
 
-            float count = scenesLeftToLoad.Length;
+            var count = scenesLeftToLoad.Length;
+
             while (scenesLeftToLoad.Length > 0)
             {
                 for (var i = 0; i < scenesLeftToLoad.Length; i++)
@@ -75,8 +84,10 @@ using UnityEngine.SceneManagement;
                     if (SceneSystem.IsSceneLoaded(world.Unmanaged, sceneEntity))
                     {
                         scenesLeftToLoad.RemoveAt(i);
+
                         var numLoaded = count - scenesLeftToLoad.Length;
                         var loadingProgress = numLoaded / count;
+
                         //LoadingData.Instance.UpdateLoading(step, loadingProgress);
                         i--;
                     }
@@ -86,7 +97,7 @@ using UnityEngine.SceneManagement;
             }
         }
 
-        static async void UpdateLoadingStateAsync(/*LoadingData.LoadingSteps step,*/ AsyncOperation loadingTask)
+        private static async void UpdateLoadingStateAsync(/*LoadingData.LoadingSteps step,*/ AsyncOperation loadingTask)
         {
             while (loadingTask != null && !loadingTask.isDone)
             {
@@ -95,3 +106,4 @@ using UnityEngine.SceneManagement;
             }
         }
     }
+}

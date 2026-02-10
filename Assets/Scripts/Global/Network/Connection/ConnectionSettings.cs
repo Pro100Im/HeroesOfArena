@@ -1,6 +1,8 @@
 using Unity.Networking.Transport;
 using UnityEngine;
 
+namespace Global.Network.Connection
+{
     public enum GameConnectionState
     {
         NotConnected,
@@ -142,7 +144,7 @@ using UnityEngine;
             get => _sessionCode;
             set
             {
-                if(_sessionCode == value)
+                if (_sessionCode == value)
                     return;
 
                 _sessionCode = value;
@@ -164,3 +166,4 @@ using UnityEngine;
             return true;
         }
     }
+}

@@ -1,8 +1,8 @@
 using Unity.Entities;
 using Unity.NetCode;
 
-//namespace Unity.Template.CompetitiveActionMultiplayer
-//{
+namespace Game.Server
+{
     public struct GameplayMaps : IBufferElementData
     {
         /// <summary>The <see cref="NetworkStreamConnection"/> entity for this <see cref="NetworkId"/> index.</summary>
@@ -26,4 +26,4 @@ using Unity.NetCode;
         public Entity ClientEntity;
         public float Delay;
     }
-//}
+}

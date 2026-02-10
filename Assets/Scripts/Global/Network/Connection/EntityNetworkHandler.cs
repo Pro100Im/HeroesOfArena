@@ -3,18 +3,8 @@ using Unity.NetCode;
 using Unity.Networking.Transport;
 using Unity.Services.Multiplayer;
 
-
-    /// <summary>
-    /// The NetworkHandler is setting up the correct driver constructors for the entity worlds
-    /// and keep a copy of the NetworkEndpoints required to connect the clients and server.
-    /// </summary>
-    /// <remarks>
-    /// The <see cref="ConnectEndpoint"/> and <see cref="ListenEndpoint"/> APIs are using an async TaskCompletionSource
-    /// instead of a direct value because the <see cref="IMultiplayerService"/> APIs using the <see cref="INetworkHandler"/>
-    /// might return before the handler is being called.
-    /// Using a TaskCompletionSource to access the connection endpoint ensure that the Session is setup properly before
-    /// accessing any of these values.
-    /// </remarks>
+namespace Global.Network.Connection
+{
     class EntityNetworkHandler : INetworkHandler
     {
         public Task<NetworkEndpoint> ConnectEndpoint => m_ConnectEndpoint.Task;
@@ -69,4 +59,5 @@ using Unity.Services.Multiplayer;
             return Task.CompletedTask;
         }
     }
+}
 

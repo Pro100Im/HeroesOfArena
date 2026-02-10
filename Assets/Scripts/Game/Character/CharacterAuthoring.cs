@@ -1,7 +1,8 @@
+using Game.Client;
 using Unity.Entities;
 using UnityEngine;
 
-namespace Unity.Template.CompetitiveActionMultiplayer
+namespace Game.Character
 {
     public class CharacterAuthoring : MonoBehaviour
     {

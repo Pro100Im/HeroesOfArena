@@ -1,7 +1,7 @@
 using Unity.Entities;
 
-//namespace Unity.Template.CompetitiveActionMultiplayer
-//{
+namespace Game.Character
+{
     public struct Character : IComponentData
     {
         //public Entity ViewEntity;
@@ -11,4 +11,4 @@ using Unity.Entities;
     {
 
     }
-//}
+}

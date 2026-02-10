@@ -1,6 +1,7 @@
 using Unity.Entities;
 using UnityEngine;
-
+namespace Game.GameResources
+{
     public class SpawnPointAuthoring : MonoBehaviour
     {
         public class Baker : Baker<SpawnPointAuthoring>
@@ -19,5 +20,7 @@ using UnityEngine;
     /// </summary>
     public struct SpawnPoint : IComponentData
     {
+
     }
+}
 

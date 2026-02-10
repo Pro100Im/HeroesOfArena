@@ -1,6 +1,8 @@
 using Unity.Entities;
 using UnityEngine;
 
+namespace Game.GameResources
+{
     public class GameResourcesAuthoring : MonoBehaviour
     {
         [Header("Network Parameters")]
@@ -53,3 +55,4 @@ using UnityEngine;
 
         public float SpawnPointBlockRadius;
     }
+}

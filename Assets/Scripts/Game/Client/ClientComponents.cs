@@ -1,12 +1,12 @@
 using Unity.Entities;
 using Unity.NetCode;
 
-//namespace Unity.Template.CompetitiveActionMultiplayer
-//{
+namespace Game.Client
+{
     [GhostComponent]
     public struct OwningPlayer : IComponentData
     {
         [GhostField]
         public Entity Entity;
     }
-//}
+}

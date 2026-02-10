@@ -6,7 +6,9 @@ using Unity.Services.Core;
 using Unity.Services.Multiplayer;
 using UnityEngine;
 
-public static class SessionExtension
+namespace Global.Network.Connection
+{
+    public static class SessionExtension
     {
         public static bool IsServer(this ISession session)
         {
@@ -117,3 +119,4 @@ public static class SessionExtension
             return options;
         }
     }
+}

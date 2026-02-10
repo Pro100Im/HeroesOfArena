@@ -1,8 +1,8 @@
 using Unity.Entities;
 using Random = Unity.Mathematics.Random;
 
-//namespace Unity.Template.CompetitiveActionMultiplayer
-//{
+namespace Game.Common.Components
+{
     public struct CameraTarget : IComponentData
     {
         //public Entity TargetEntity;
@@ -13,5 +13,5 @@ using Random = Unity.Mathematics.Random;
     public struct FixedRandom : IComponentData
     {
         public Random Random;
-    }
-//}
+}
+}

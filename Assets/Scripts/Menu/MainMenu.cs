@@ -1,3 +1,5 @@
+using Global.Network;
+using Global.Network.Connection;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -43,7 +45,7 @@ namespace Menu
 
         private void Exit()
         {
-            Application.Quit();
+            GameManager.Instance.QuitAsync();
         }
 
         private void OnDestroy()

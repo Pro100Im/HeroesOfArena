@@ -7,8 +7,11 @@ using System.Threading;
 using Unity.Services.Multiplayer;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Global.Network.Connection;
+using Global.Navigation;
 
-
+namespace Global.Network
+{
     public class GameManager : MonoBehaviour
     {
         public const int MaxPlayer = 16;
@@ -20,13 +23,11 @@ using UnityEngine.SceneManagement;
 
         public static GameManager Instance { get; private set; }
 
-        //public Transform PlayerNameContainer;
-
-        private GameConnection m_GameConnection;
-        private Task m_LoadingGame;
-        private CancellationTokenSource m_LoadingGameCancel;
-        private Task m_LoadingMainMenu;
-        private CancellationTokenSource m_LoadingMainMenuCancel;
+        private GameConnection _gameConnection;
+        private Task _loadingGame;
+        private CancellationTokenSource _loadingGameCancel;
+        private Task _loadingMainMenu;
+        private CancellationTokenSource _loadingMainMenuCancel;
 
         private void Awake()
         {
@@ -46,13 +47,13 @@ using UnityEngine.SceneManagement;
 
             if (SceneManager.GetActiveScene().name == "MainMenu")
             {
-                m_LoadingMainMenuCancel = new CancellationTokenSource();
+                _loadingMainMenuCancel = new CancellationTokenSource();
 
                 try
                 {
-                    m_LoadingMainMenu = StartMenuAsync(m_LoadingMainMenuCancel.Token);
+                    _loadingMainMenu = StartMenuAsync(_loadingMainMenuCancel.Token);
 
-                    await m_LoadingMainMenu;
+                    await _loadingMainMenu;
                 }
                 catch (OperationCanceledException)
                 {
@@ -60,30 +61,11 @@ using UnityEngine.SceneManagement;
                 }
                 finally
                 {
-                    m_LoadingMainMenuCancel.Dispose();
-                    m_LoadingMainMenuCancel = null;
+                    _loadingMainMenuCancel.Dispose();
+                    _loadingMainMenuCancel = null;
                 }
             }
         }
-
-   //     private void LateUpdate()
-   //     {
-   //         var gameInput = GameInput.Actions;
-
-   //         if (gameInput.DebugActions.ReturnToMainMenu.WasPerformedThisFrame())
-   //         {
-   //             if (GameSettings.Instance.GameState != GlobalGameState.MainMenu) 
-   //                 ReturnToMainMenuAsync();
-   //             else 
-   //                 QuitAsync();
-   //         }
-
-			//if (gameInput.DebugActions.StartClientServer.WasPerformedThisFrame()) 
-   //             StartGameAsync(CreationType.Create);
-
-   //         if (gameInput.DebugActions.StartClient.WasPerformedThisFrame()) 
-   //             StartGameAsync(CreationType.Join);
-   //     }
 
         private async Task StartMenuAsync(CancellationToken cancellationToken)
         {
@@ -166,16 +148,18 @@ using UnityEngine.SceneManagement;
 
             BeginEnteringGame();
 
-            m_LoadingGameCancel = new CancellationTokenSource();
+            _loadingGameCancel = new CancellationTokenSource();
 
             try
             {
-                m_LoadingGame = StartGameAsync(creationType, m_LoadingGameCancel.Token);
-                await m_LoadingGame;
+                _loadingGame = StartGameAsync(creationType, _loadingGameCancel.Token);
+
+                await _loadingGame;
             }
             catch (OperationCanceledException)
             {
                 Debug.Log($"[{nameof(StartGameAsync)}] Loading has been cancelled.");
+
                 return;
             }
             catch (Exception e)
@@ -184,8 +168,8 @@ using UnityEngine.SceneManagement;
                 Debug.LogException(e);
 
                 // Disposing the token here because the error has been handled and ReturnToMainMenu should not check it.
-                m_LoadingGameCancel.Dispose();
-                m_LoadingGameCancel = null;
+                _loadingGameCancel.Dispose();
+                _loadingGameCancel = null;
 
                 ReturnToMainMenuAsync();
 
@@ -193,8 +177,8 @@ using UnityEngine.SceneManagement;
             }
             finally
             {
-                m_LoadingGameCancel?.Dispose();
-                m_LoadingGameCancel = null;
+                _loadingGameCancel?.Dispose();
+                _loadingGameCancel = null;
             }
 
             FinishLoadingGame();
@@ -202,15 +186,15 @@ using UnityEngine.SceneManagement;
 
         private async Task StartGameAsync(CreationType creationType, CancellationToken cancellationToken)
         {
-            // If the MainMenu world is loaded or loading, we need to unload it before joining the game.
-            if (m_LoadingMainMenuCancel != null || GameSettings.Instance.MainMenuSceneLoaded)
+            if (_loadingMainMenuCancel != null || GameSettings.Instance.MainMenuSceneLoaded)
             {
-                if (m_LoadingMainMenuCancel != null)
+                if (_loadingMainMenuCancel != null)
                 {
-                    m_LoadingMainMenuCancel.Cancel();
+                    _loadingMainMenuCancel.Cancel();
+
                     try
                     {
-                        await m_LoadingMainMenu;
+                        await _loadingMainMenu;
                     }
                     catch (OperationCanceledException)
                     {
@@ -218,7 +202,7 @@ using UnityEngine.SceneManagement;
                     }
                 }
 
-                if(GameSettings.Instance.MainMenuSceneLoaded)
+                if (GameSettings.Instance.MainMenuSceneLoaded)
                     await DisconnectAndUnloadWorlds();
 
                 cancellationToken.ThrowIfCancellationRequested();
@@ -229,35 +213,35 @@ using UnityEngine.SceneManagement;
 
             switch (creationType)
             {
-                case (CreationType.Create):
-                {
-                    m_GameConnection = await GameConnection.CreateGameAsync();
+                case CreationType.Create:
+                    {
+                        _gameConnection = await GameConnection.CreateGameAsync();
 
-                    break;
-                }
-                case (CreationType.Join):
-                {
-                    m_GameConnection = await GameConnection.JoinGameAsync();
+                        break;
+                    }
+                case CreationType.Join:
+                    {
+                        _gameConnection = await GameConnection.JoinGameAsync();
 
-                    break;
-                }
-                case (CreationType.QuickJoin):
-                {
-                    Debug.Log($"[{nameof(StartGameAsync)}] Quick joining a game.");
-                    m_GameConnection = await GameConnection.JoinOrCreateMatchmakerGameAsync(cancellationToken);
+                        break;
+                    }
+                case CreationType.QuickJoin:
+                    {
+                        Debug.Log($"[{nameof(StartGameAsync)}] Quick joining a game.");
+                        _gameConnection = await GameConnection.JoinOrCreateMatchmakerGameAsync(cancellationToken);
 
-                    break;
-                }
+                        break;
+                    }
             }
 
-            m_GameConnection.Session.RemovedFromSession += OnSessionLeft;
+            _gameConnection.Session.RemovedFromSession += OnSessionLeft;
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            ConnectionSettings.Instance.SessionCode = m_GameConnection.Session.Code;
+            ConnectionSettings.Instance.SessionCode = _gameConnection.Session.Code;
 
             // Creating entity worlds.
-            CreateEntityWorlds(m_GameConnection.Session, m_GameConnection.SessionConnectionType, out var server, out var client);
+            CreateEntityWorlds(_gameConnection.Session, _gameConnection.SessionConnectionType, out var server, out var client);
 
             // If we have a server, start listening.
             if (server != null)
@@ -265,11 +249,11 @@ using UnityEngine.SceneManagement;
                 using var drvQuery = server.EntityManager.CreateEntityQuery(ComponentType.ReadWrite<NetworkStreamDriver>());
                 var serverDriver = drvQuery.GetSingletonRW<NetworkStreamDriver>().ValueRW;
 
-                serverDriver.Listen(m_GameConnection.ListenEndpoint);
+                serverDriver.Listen(_gameConnection.ListenEndpoint);
             }
             if (client != null)
             {
-                ConnectionSettings.Instance.ConnectionEndpoint = m_GameConnection.ConnectEndpoint;
+                ConnectionSettings.Instance.ConnectionEndpoint = _gameConnection.ConnectEndpoint;
 
                 await WaitForPlayerConnectionAsync(cancellationToken);
             }
@@ -291,48 +275,48 @@ using UnityEngine.SceneManagement;
 
         private void OnSessionLeft()
         {
-            m_GameConnection = null;
+            _gameConnection = null;
 
             ReturnToMainMenuAsync();
         }
 
-        public async void StartFromBootstrapAsync(World server, World client)
-        {
-            if (GameSettings.Instance.GameState != GlobalGameState.MainMenu)
-            {
-                Debug.Log($"[{nameof(StartFromBootstrapAsync)}] Must not be in-game to join game!");
+        //public async void StartFromBootstrapAsync(World server, World client)
+        //{
+        //    if (GameSettings.Instance.GameState != GlobalGameState.MainMenu)
+        //    {
+        //        Debug.Log($"[{nameof(StartFromBootstrapAsync)}] Must not be in-game to join game!");
 
-                return;
-            }
-            if (SceneManager.GetActiveScene().name == MainMenuSceneName)
-            {
-                Debug.Log($"Must not be in {MainMenuSceneName} to use [{nameof(StartFromBootstrapAsync)}]!");
+        //        return;
+        //    }
+        //    if (SceneManager.GetActiveScene().name == MainMenuSceneName)
+        //    {
+        //        Debug.Log($"Must not be in {MainMenuSceneName} to use [{nameof(StartFromBootstrapAsync)}]!");
 
-                return;
-            }
+        //        return;
+        //    }
 
-            Debug.Log($"[{nameof(StartFromBootstrapAsync)}] Starting game");
+        //    Debug.Log($"[{nameof(StartFromBootstrapAsync)}] Starting game");
 
-            BeginEnteringGame();
+        //    BeginEnteringGame();
 
-            // The bootstrap is creating the worlds and start the connection for us,
-            // let's make sure the client is connected before the next step.
-            if (client != null)
-            {
-                await WaitForPlayerConnectionAsync();
-            }
+        //    // The bootstrap is creating the worlds and start the connection for us,
+        //    // let's make sure the client is connected before the next step.
+        //    if (client != null)
+        //    {
+        //        await WaitForPlayerConnectionAsync();
+        //    }
 
-            // Load any additional scene that would be required by the Gameplay.
-            await ScenesLoader.LoadGameplayAsync(server, client);
+        //    // Load any additional scene that would be required by the Gameplay.
+        //    await ScenesLoader.LoadGameplayAsync(server, client);
 
-            if (client != null)
-            {
-                await WaitForGhostReplicationAsync(client);
-                await WaitForAttachedCameraAsync(client);
-            }
+        //    if (client != null)
+        //    {
+        //        await WaitForGhostReplicationAsync(client);
+        //        await WaitForAttachedCameraAsync(client);
+        //    }
 
-            FinishLoadingGame();
-        }
+        //    FinishLoadingGame();
+        //}
 
         private void BeginEnteringGame()
         {
@@ -467,27 +451,25 @@ using UnityEngine.SceneManagement;
             GameSettings.Instance.GameState = GlobalGameState.InGame;
         }
 
-        /// <summary>
-        /// Safe return to main menu, can be called by the pause menu button.
-        /// </summary>
         public async void ReturnToMainMenuAsync()
         {
             Debug.Log($"[{nameof(ReturnToMainMenuAsync)}] Called.");
             if (!CanUseMainMenu)
             {
                 QuitAsync();
+
                 return;
             }
 
-            if (m_LoadingGameCancel != null)
+            if (_loadingGameCancel != null)
             {
                 Debug.Log($"[{nameof(ReturnToMainMenuAsync)}] Cancelling loading game.");
 
-                m_LoadingGameCancel.Cancel();
+                _loadingGameCancel.Cancel();
 
                 try
                 {
-                    await m_LoadingGame;
+                    await _loadingGame;
                 }
                 catch (OperationCanceledException)
                 {
@@ -540,19 +522,19 @@ using UnityEngine.SceneManagement;
 
         private async Task LeaveSessionAsync()
         {
-            if (m_GameConnection != null)
+            if (_gameConnection != null)
             {
-                m_GameConnection.Session.RemovedFromSession -= OnSessionLeft;
+                _gameConnection.Session.RemovedFromSession -= OnSessionLeft;
 
-                if (m_GameConnection.Session.IsHost || m_GameConnection.Session.IsServer())
+                if (_gameConnection.Session.IsHost || _gameConnection.Session.IsServer())
                     ConnectionSettings.Instance.SessionCode = null;
 
-                if (m_GameConnection.Session.IsHost)
-                    await m_GameConnection.Session.AsHost().DeleteAsync();
+                if (_gameConnection.Session.IsHost)
+                    await _gameConnection.Session.AsHost().DeleteAsync();
                 else
-                    await m_GameConnection.Session.LeaveAsync();
+                    await _gameConnection.Session.LeaveAsync();
 
-                m_GameConnection = null;
+                _gameConnection = null;
             }
         }
 
@@ -568,3 +550,4 @@ using UnityEngine.SceneManagement;
 #endif
         }
     }
+}

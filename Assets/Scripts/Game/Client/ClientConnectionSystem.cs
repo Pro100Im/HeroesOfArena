@@ -1,9 +1,10 @@
+using Global.Network.Connection;
 using Unity.Entities;
 using Unity.NetCode;
 using UnityEngine;
 
-//namespace Unity.Template.CompetitiveActionMultiplayer
-//{
+namespace Game.Client
+{
     [WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation)]
     [UpdateInGroup(typeof(SimulationSystemGroup))]
     public partial class ClientConnectionSystem : SystemBase
@@ -40,4 +41,4 @@ using UnityEngine;
             }
         }
     }
-//}
+}
