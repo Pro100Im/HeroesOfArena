@@ -99,8 +99,8 @@ namespace Game.Client
                 .CreateCommandBuffer(state.WorldUnmanaged);
 
             // Initialize local-owned characters
-            foreach (var (character, entity) in SystemAPI
-                         .Query<Character>()
+            foreach (var (character, characterInitialized, entity) in SystemAPI
+                         .Query<Character, EnabledRefRW<CharacterInitialized>>()
                          .WithAll<GhostOwnerIsLocal, OwningPlayer, GhostOwner>()
                          .WithDisabled<CharacterInitialized>()
                          .WithEntityAccess())
@@ -112,23 +112,23 @@ namespace Game.Client
                 //});
 
                 Debug.LogWarning("Added camera!!!!!!!!!!!!!");
-
+                characterInitialized.ValueRW = true;
                 //var childBufferLookup = SystemAPI.GetBufferLookup<Child>();
                 //MiscUtilities.SetShadowModeInHierarchy(state.EntityManager, ecb, entity, ref childBufferLookup,
                 //    ShadowCastingMode.ShadowsOnly);
             }
 
-            foreach (var (characterInitialized, entity) in SystemAPI
-                         .Query<EnabledRefRW<CharacterInitialized>>()
-                         .WithAll<Character>()
-                         .WithDisabled<CharacterInitialized>()
-                         .WithEntityAccess())
-            {
-                //physicsCollider.ValueRW.MakeUnique(entity, ecb);
+            //foreach (var (characterInitialized, entity) in SystemAPI
+            //             .Query<EnabledRefRW<CharacterInitialized>>()
+            //             .WithAll<Character>()
+            //             .WithDisabled<CharacterInitialized>()
+            //             .WithEntityAccess())
+            //{
+            //    //physicsCollider.ValueRW.MakeUnique(entity, ecb);
 
-                // Mark initialized
-                characterInitialized.ValueRW = true;
-            }
+            //    // Mark initialized
+            //    characterInitialized.ValueRW = true;
+            //}
         }
     }
 }

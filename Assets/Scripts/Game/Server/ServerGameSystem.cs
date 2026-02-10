@@ -229,7 +229,7 @@ namespace Game.Server
                         //if (!spawnPointBlocked)
                         //{
                         //    spawnPoint = spawnPointLtWs[spawnPointIndex];
-                        //    consumedSpawnPoints.Set(spawnPointIndex, true);
+                        consumedSpawnPoints.Set(spawnPointIndex, true);
 
                         //    return true;
                         //}
