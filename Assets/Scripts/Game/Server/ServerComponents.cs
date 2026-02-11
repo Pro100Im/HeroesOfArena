@@ -7,8 +7,8 @@ namespace Game.Server
     {
         /// <summary>The <see cref="NetworkStreamConnection"/> entity for this <see cref="NetworkId"/> index.</summary>
         public Entity ConnectionEntity;
-        /// <summary>The <see cref="FirstPersonPlayer"/> entity for this <see cref="NetworkId"/> index.</summary>
-        public Entity FirstPersonPlayersEntity;
+        /// <summary>The <see cref="CharacterPlayer"/> entity for this <see cref="NetworkId"/> index.</summary>
+        public Entity CharacterPlayersEntity;
         /// <summary>The <see cref="FirstPersonCharacterControl"/> entity for this <see cref="NetworkId"/> index.</summary>
         public Entity CharacterControllerEntity;
 
