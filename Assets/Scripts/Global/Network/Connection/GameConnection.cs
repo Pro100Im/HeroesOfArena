@@ -45,6 +45,8 @@ namespace Global.Network.Connection
 
         public static async Task<GameConnection> JoinOrCreateMatchmakerGameAsync(CancellationToken cancellationToken)
         {
+            UIManager.Hide(UIKey.MainMenu);
+
             var gameConnection = new GameConnection();
 
             await StartServicesAsync();

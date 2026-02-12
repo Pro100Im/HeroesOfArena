@@ -41,12 +41,18 @@ namespace Menu
 
         public override void Show(string data)
         {
+            var root = _mainMenuDoc.rootVisualElement;
+            var canvas = root.Q<VisualElement>("Canvas");
 
+            canvas.RemoveFromClassList("hide");
         }
 
         public override void Hide()
         {
+            var root = _mainMenuDoc.rootVisualElement;
+            var canvas = root.Q<VisualElement>("Canvas");
 
+            canvas.AddToClassList("hide");
         }
 
         private void QuickPlay()

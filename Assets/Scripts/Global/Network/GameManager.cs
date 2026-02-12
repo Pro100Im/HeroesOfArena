@@ -229,8 +229,6 @@ namespace Global.Network
                 ConnectionSettings.Instance.ConnectionEndpoint = _gameConnection.ConnectEndpoint;
 
                 await WaitForPlayerConnectionAsync(cancellationToken);
-
-                UIManager.Hide(UIKey.SearchingPopup);
             }
 
             cancellationToken.ThrowIfCancellationRequested();
@@ -245,7 +243,6 @@ namespace Global.Network
                 await WaitForGhostReplicationAsync(client, cancellationToken);
                 await WaitForAttachedCameraAsync(client, cancellationToken);
             }
-
         }
 
         private void OnSessionLeft()
@@ -323,7 +320,8 @@ namespace Global.Network
 
         private static async Task WaitForPlayerConnectionAsync(CancellationToken cancellationToken = default)
         {
-            //LoadingData.Instance.UpdateLoading(LoadingData.LoadingSteps.WaitingConnection);
+            UIManager.Show(UIKey.LoadingScreen, "Connecting to host...");
+            UIManager.Hide(UIKey.SearchingPopup);
             // The GameManagerSystem is handling the connection/reconnection once the client world is created.
             ConnectionSettings.Instance.GameConnectionState = GameConnectionState.Connecting;
 
@@ -335,7 +333,7 @@ namespace Global.Network
 
         private static async Task WaitForGhostReplicationAsync(World world, CancellationToken cancellationToken = default)
         {
-            //LoadingData.Instance.UpdateLoading(LoadingData.LoadingSteps.WorldReplication);
+            UIManager.Update(UIKey.LoadingScreen, "Loading...");
 
             using var ghostCountQuery = world.EntityManager.CreateEntityQuery(ComponentType.ReadOnly<GhostCount>());
             var waitedForTicks = 0;
@@ -362,7 +360,7 @@ namespace Global.Network
 
         private static async Task WaitForAttachedCameraAsync(World world, CancellationToken cancellationToken = default)
         {
-            //LoadingData.Instance.UpdateLoading(LoadingData.LoadingSteps.WaitingOnPlayer);
+            UIManager.Show(UIKey.LoadingScreen, "Waiting players...");
 
             //using var mainEntityCameraQuery = world.EntityManager.CreateEntityQuery(ComponentType.ReadOnly<MainCamera>());
 
@@ -377,7 +375,8 @@ namespace Global.Network
 
         private void FinishLoadingGame()
         {
-            //LoadingData.Instance.UpdateLoading(LoadingData.LoadingSteps.LoadingDone);
+            UIManager.Hide(UIKey.LoadingScreen);
+
             _gameState = GlobalGameState.InGame;
         }
 
