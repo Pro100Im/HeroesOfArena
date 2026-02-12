@@ -1,3 +1,4 @@
+using Global.Network;
 using Global.UI;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -5,7 +6,7 @@ using UnityEngine.UIElements;
 namespace Menu
 {
     [RequireComponent(typeof(UIDocument))]
-    public class SearchingPopup : MonoBehaviour, IUIElement<string>, IUpdatable<string>
+    public class SearchingPopup : UpdatableUIElement<string>
     {
         [SerializeField] private UIDocument _popupDoc;
 
@@ -30,35 +31,33 @@ namespace Menu
             UIManager.Register(UIKey.SearchingPopup, this);
         }
 
-        public void Show(string data)
+        public override void Show(string data)
         {
             var root = _popupDoc.rootVisualElement;
             var canvas = root.Q<VisualElement>("Canvas");
+            var button = root.Q<Button>("CancelButton");
+            var background = root.Q<VisualElement>("Back");
             var popupText = root.Q<Label>("PopupText");
 
             popupText.text = data;
-
             canvas.RemoveFromClassList("hide");
-            canvas.pickingMode = PickingMode.Position;
-            Debug.Log($"canvas.ClassListContains(\"hide\") {canvas.ClassListContains("hide")}");
-
-            foreach (var child in canvas.Children()) 
-                child.pickingMode = PickingMode.Position;
+            button.pickingMode = PickingMode.Position;
+            background.pickingMode = PickingMode.Position;
         }
 
-        public void Hide()
+        public override void Hide()
         {
             var root = _popupDoc.rootVisualElement;
             var canvas = root.Q<VisualElement>("Canvas");
+            var button = root.Q<Button>("CancelButton");
+            var background = root.Q<VisualElement>("Back");
 
             canvas.AddToClassList("hide");
-            canvas.pickingMode = PickingMode.Ignore;
-
-            foreach (var child in canvas.Children())
-                child.pickingMode = PickingMode.Ignore;
+            button.pickingMode = PickingMode.Ignore;
+            background.pickingMode = PickingMode.Ignore;
         }
 
-        public void UpdateData(string data)
+        public override void UpdateData(string data)
         {
             var root = _popupDoc.rootVisualElement;
             var popupText = root.Q<Label>("PopupText");
@@ -68,14 +67,14 @@ namespace Menu
 
         private void CancelSearching()
         {
-
+            GameManager.Instance.CancelStartingGame();
         }
 
         private void OnDestroy()
         {
             _cancelButton.clickable.clicked -= CancelSearching;
 
-            UIManager.Unregister(UIKey.SearchingPopup, this);
+            UIManager.Unregister(UIKey.SearchingPopup);
         }
     }
 }

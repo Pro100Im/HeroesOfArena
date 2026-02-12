@@ -7,7 +7,7 @@ using UnityEngine.UIElements;
 namespace Menu
 {
     [RequireComponent(typeof(UIDocument))]
-    public class MainMenu : MonoBehaviour, IUIElement<string>
+    public class MainMenu : UIElement<string>
     {
         [SerializeField] private UIDocument _mainMenuDoc;
 
@@ -39,12 +39,12 @@ namespace Menu
             UIManager.Register(UIKey.MainMenu, this); 
         }
 
-        public void Show(string data)
+        public override void Show(string data)
         {
 
         }
 
-        public void Hide()
+        public override void Hide()
         {
 
         }
@@ -71,7 +71,7 @@ namespace Menu
             _testButton.clickable.clicked -= Test;
             _exitButton.clickable.clicked -= Exit;
 
-            UIManager.Unregister(UIKey.MainMenu, this);
+            UIManager.Unregister(UIKey.MainMenu);
         }
     }
 }

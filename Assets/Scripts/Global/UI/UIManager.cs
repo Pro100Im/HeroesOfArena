@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace Global.UI
 {
@@ -10,18 +9,16 @@ namespace Global.UI
         private static UIKey? _currentKey;
         private static object _currentElement;
 
-        public static void Register<TData>(UIKey key, IUIElement<TData> element)
+        public static void Register<TData>(UIKey key, IShowUIElement<TData> element)
         {
             elements.Add(key, element);
         }
 
-        public static void Unregister<TData>(UIKey key, IUIElement<TData> element)
+        public static void Unregister(UIKey key)
         {
-            if (elements.TryGetValue(key, out var registered) && ReferenceEquals(registered, element))
+            if (elements.Remove(key))
             {
-                elements.Remove(key);
-
-                if (_currentKey == key && ReferenceEquals(_currentElement, element))
+                if (_currentKey == key)
                 {
                     _currentKey = null;
                     _currentElement = null;
@@ -29,26 +26,11 @@ namespace Global.UI
             }
         }
 
-        private static IUIElement<TData> Get<TData>(UIKey key)
-        {
-            if (_currentKey == key && _currentElement is IUIElement<TData> cached)
-                return cached;
-
-            if (elements.TryGetValue(key, out var element))
-            {
-                _currentKey = key;
-                _currentElement = element;
-
-                return (IUIElement<TData>)element;
-            }
-
-            return null;
-        }
-
         public static void Show<TData>(UIKey key, TData data)
         {
-            Debug.Log($"Showing UI element with key: {key} and data: {data}");
-            Get<TData>(key)?.Show(data);
+            var element = Get<TData>(key);
+
+            element.Show(data);
         }
 
         public static void Update<TData>(UIKey key, TData data)
@@ -59,19 +41,36 @@ namespace Global.UI
                 updatable.UpdateData(data);
         }
 
-        public static void Hide(UIKey key) 
-        { 
-            if (_currentKey == key && _currentElement is IUIElement<object> cachedObj) 
-            { 
-                cachedObj.Hide(); 
-                
-                return; 
+        private static IShowUIElement<TData> Get<TData>(UIKey key)
+        {
+            if (_currentKey == key && _currentElement is IShowUIElement<TData> cached)
+                return cached;
+
+            if (elements.TryGetValue(key, out var element))
+            {
+                _currentKey = key;
+                _currentElement = element;
+
+                return (IShowUIElement<TData>)element;
             }
-            
-            if (elements.TryGetValue(key, out var element) && element is IUIElement<object> uiElement) 
-            { 
-                uiElement.Hide(); 
-            } 
+
+            return null;
+        }
+
+        public static void Hide(UIKey key)
+        {
+            if (_currentKey == key && _currentElement is IHideUIElement current)
+            {
+                current.Hide();
+
+                _currentKey = null;
+                _currentElement = null; return;
+            }
+
+            if (elements.TryGetValue(key, out var element) && element is IHideUIElement hideElement)
+            {
+                hideElement.Hide();
+            }
         }
     }
 }

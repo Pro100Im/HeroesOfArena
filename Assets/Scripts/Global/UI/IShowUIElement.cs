@@ -1,8 +1,7 @@
 namespace Global.UI
 {
-    public interface IUIElement<TData>
+    public interface IShowUIElement<TData>
     {
         public void Show(TData data);
-        public void Hide();
     }
 }

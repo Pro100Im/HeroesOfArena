@@ -148,6 +148,13 @@ namespace Global.Network
             FinishLoadingGame();
         }
 
+        public void CancelStartingGame()
+        {
+            _loadingGameCancel?.Cancel();
+            
+            UIManager.Hide(UIKey.SearchingPopup);
+        }
+
         private async Task StartGameAsync(CreationType creationType, CancellationToken cancellationToken)
         {
             if (_loadingMainMenuCancel != null || _mainMenuSceneLoaded)
