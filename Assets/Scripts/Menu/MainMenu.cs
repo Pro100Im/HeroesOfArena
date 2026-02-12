@@ -1,23 +1,15 @@
 using Global.Network;
 using Global.Network.Connection;
+using Global.UI;
 using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace Menu
 {
     [RequireComponent(typeof(UIDocument))]
-    public class MainMenu : MonoBehaviour
+    public class MainMenu : MonoBehaviour, IUIElement<string>
     {
         [SerializeField] private UIDocument _mainMenuDoc;
-
-        public enum MainMenuState
-        {
-            MainMenuScreen,
-            DirectConnectPopUp,
-            JoinCodePopUp,
-        }
-
-        private MainMenuState _mainMenuState;
 
         private Button _quickPlayButton;
         private Button _testButton;
@@ -42,6 +34,21 @@ namespace Menu
             _exitButton.clickable.clicked += Exit;
         }
 
+        private void Start() 
+        { 
+            UIManager.Register(UIKey.MainMenu, this); 
+        }
+
+        public void Show(string data)
+        {
+
+        }
+
+        public void Hide()
+        {
+
+        }
+
         private void QuickPlay()
         {
             GameManager.Instance.StartGameAsync(CreationType.QuickJoin);
@@ -50,6 +57,7 @@ namespace Menu
         private void Test()
         {
             Debug.Log("Test button clicked!");
+            UIManager.Show(UIKey.SearchingPopup, "test popup!");
         }
 
         private void Exit()
@@ -62,6 +70,8 @@ namespace Menu
             _quickPlayButton.clickable.clicked -= QuickPlay;
             _testButton.clickable.clicked -= Test;
             _exitButton.clickable.clicked -= Exit;
+
+            UIManager.Unregister(UIKey.MainMenu, this);
         }
     }
 }

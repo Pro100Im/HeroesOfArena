@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using Global.UI;
+using System.Threading;
 using System.Threading.Tasks;
 using Unity.Networking.Transport;
 using Unity.Services.Authentication;
@@ -60,6 +61,7 @@ namespace Global.Network.Connection
             options.WithNetworkHandler(networkHandler);
 
             Debug.Log("Looking for match...");
+            UIManager.Update(UIKey.SearchingPopup, "Looking for match...");
             //LoadingData.Instance.UpdateLoading(LoadingData.LoadingSteps.LookingForMatch);
 
             gameConnection.Session = await MultiplayerService.Instance.MatchmakeSessionAsync(match, options, cancellationToken);

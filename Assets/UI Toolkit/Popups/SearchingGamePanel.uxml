@@ -1,0 +1,12 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI%20Toolkit/MainMenu/MainMenuStyle.uss?fileID=7433441132597879392&amp;guid=7dd127756999a7943adae0dc90168adb&amp;type=3#MainMenuStyle"/>
+    <Style src="project://database/Assets/UI%20Toolkit/Global/GlobalStyle.uss?fileID=7433441132597879392&amp;guid=f0b50401ae793a440bdbacc20d05f547&amp;type=3#GlobalStyle"/>
+    <ui:VisualElement name="Canvas" picking-mode="Ignore" class="hide" style="flex-grow: 1; justify-content: center; color: rgb(27, 27, 27); align-items: center; transition-property: opacity; transition-duration: 0.5s; transition-timing-function: ease; transition-delay: 0s; display: flex;">
+        <ui:VisualElement name="Back" picking-mode="Ignore" style="flex-grow: 1; align-self: stretch; align-items: center; justify-content: center; background-color: rgba(0, 0, 0, 0.6);">
+            <ui:VisualElement name="SearchingPopUp" picking-mode="Ignore" style="flex-grow: 0; width: 400px; height: 200px; justify-content: center; align-self: center; align-content: center; background-image: url(&quot;project://database/Assets/Sources/Art/button_frame.png?fileID=2800000&amp;guid=cdd43031fbfd59f43b608a16d590d958&amp;type=3#button_frame&quot;); opacity: 1; align-items: stretch; color: rgb(192, 175, 175);">
+                <ui:Label text="TEST TEXT" name="PopupText" style="-unity-text-align: upper-center; font-size: 40px; justify-content: center; align-items: center; align-self: auto; align-content: center;"/>
+            </ui:VisualElement>
+            <ui:Button text="Cancel" name="CancelButton" picking-mode="Ignore" class="main-menu-button" style="translate: 0 -59%; color: rgb(192, 175, 175);"/>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

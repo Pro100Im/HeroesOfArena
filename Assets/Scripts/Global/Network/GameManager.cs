@@ -1,14 +1,15 @@
+using Global.Navigation;
+using Global.Network.Connection;
+using Global.UI;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.NetCode;
-using System.Threading;
 using Unity.Services.Multiplayer;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using Global.Network.Connection;
-using Global.Navigation;
 
 namespace Global.Network
 {
@@ -104,6 +105,8 @@ namespace Global.Network
                 Debug.Log("[StartGameAsync] Called but in-game, cannot start while in-game!");
                 return;
             }
+
+            UIManager.Show(UIKey.SearchingPopup, "Starting...");
 
             Debug.Log($"[{nameof(StartGameAsync)}] Called with creation type '{creationType}'");
 
@@ -201,6 +204,8 @@ namespace Global.Network
 
             ConnectionSettings.Instance.SessionCode = _gameConnection.Session.Code;
 
+            UIManager.Update(UIKey.SearchingPopup, "Match found!");
+
             // Creating entity worlds.
             CreateEntityWorlds(_gameConnection.Session, _gameConnection.SessionConnectionType, out var server, out var client);
 
@@ -217,6 +222,8 @@ namespace Global.Network
                 ConnectionSettings.Instance.ConnectionEndpoint = _gameConnection.ConnectEndpoint;
 
                 await WaitForPlayerConnectionAsync(cancellationToken);
+
+                UIManager.Hide(UIKey.SearchingPopup);
             }
 
             cancellationToken.ThrowIfCancellationRequested();
@@ -319,13 +326,6 @@ namespace Global.Network
             }
         }
 
-        /// <summary>
-        /// Wait until the vast majority of ghosts have been spawned.
-        /// If we don't do this, we'll see a bunch of ghosts pop in as the scene loads.
-        /// </summary>
-        /// <param name="world"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
         private static async Task WaitForGhostReplicationAsync(World world, CancellationToken cancellationToken = default)
         {
             //LoadingData.Instance.UpdateLoading(LoadingData.LoadingSteps.WorldReplication);
@@ -377,6 +377,7 @@ namespace Global.Network
         public async void ReturnToMainMenuAsync()
         {
             Debug.Log($"[{nameof(ReturnToMainMenuAsync)}] Called.");
+
             if (!CanUseMainMenu)
             {
                 QuitAsync();
