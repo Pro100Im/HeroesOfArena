@@ -7,6 +7,7 @@ namespace Game.Server.Spawner
     using Unity.Collections;
     using Unity.Entities;
     using Unity.NetCode;
+    using Unity.Physics;
     using Unity.Transforms;
 
     [WorldSystemFilter(WorldSystemFilterFlags.ServerSimulation)]
@@ -104,7 +105,7 @@ namespace Game.Server.Spawner
 
             if (spawnPointLtWs.Length > 0)
             {
-                //var collisionWorld = SystemAPI.GetSingleton<PhysicsWorldSingleton>().CollisionWorld;
+                var collisionWorld = SystemAPI.GetSingleton<PhysicsWorldSingleton>().CollisionWorld;
                 var randSpawnPointIndex = random.Random.NextInt(0, spawnPointLtWs.Length - 1);
 
                 for (var attempt = 0; attempt < spawnPointLtWs.Length; attempt++)
@@ -113,21 +114,19 @@ namespace Game.Server.Spawner
 
                     if (!consumedSpawnPoints.IsSet(spawnPointIndex))
                     {
-                        //Debug.Assert(gameResources.SpawnPointCollisionFilter.CollidesWith != default);
+                        var spawnPointBlocked = collisionWorld.CheckSphere(
+                            spawnPointLtWs[spawnPointIndex].Position,
+                            gameResources.SpawnPointBlockRadius,
+                            gameResources.SpawnPointCollisionFilter,
+                            QueryInteraction.IgnoreTriggers);
 
-                        //var spawnPointBlocked = collisionWorld.CheckSphere(
-                        //    spawnPointLtWs[spawnPointIndex].Position,
-                        //    gameResources.SpawnPointBlockRadius;
+                        if (!spawnPointBlocked)
+                        {
+                            spawnPoint = spawnPointLtWs[spawnPointIndex];
+                            consumedSpawnPoints.Set(spawnPointIndex, true);
 
-                        //if (!spawnPointBlocked)
-                        //{
-                        //    spawnPoint = spawnPointLtWs[spawnPointIndex];
-                        consumedSpawnPoints.Set(spawnPointIndex, true);
-
-                        //    return true;
-                        //}
-
-                        return true;
+                            return true;
+                        }
                     }
                 }
 

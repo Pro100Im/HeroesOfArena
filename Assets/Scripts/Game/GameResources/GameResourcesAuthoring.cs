@@ -1,4 +1,5 @@
 using Unity.Entities;
+using Unity.Physics;
 using UnityEngine;
 
 namespace Game.GameResources
@@ -16,17 +17,19 @@ namespace Game.GameResources
         public GameObject PlayerGhost;
         public GameObject CharacterGhost;
 
-        [Header("Other Prefabs")]
-        public GameObject SpectatorPrefab;
-
         [Tooltip("Prevent player spawning if another player is within this radius!")]
         public float SpawnPointBlockRadius = 1f;
+        public LayerMask PlayerLayerMask;
 
         public class Baker : Baker<GameResourcesAuthoring>
         {
             public override void Bake(GameResourcesAuthoring authoring)
             {
                 var entity = GetEntity(TransformUsageFlags.None);
+                var mask = (uint)authoring.PlayerLayerMask.value;
+                var filter = CollisionFilter.Default;
+
+                filter.CollidesWith = mask;
 
                 AddComponent(entity, new GameResources
                 {
@@ -37,7 +40,8 @@ namespace Game.GameResources
 
                     PlayerGhost = GetEntity(authoring.PlayerGhost, TransformUsageFlags.Dynamic),
                     CharacterGhost = GetEntity(authoring.CharacterGhost, TransformUsageFlags.Dynamic),
-                    SpectatorPrefab = GetEntity(authoring.SpectatorPrefab, TransformUsageFlags.Dynamic),
+
+                    SpawnPointCollisionFilter = filter
                 });
             }
         }
@@ -51,8 +55,8 @@ namespace Game.GameResources
 
         public Entity PlayerGhost;
         public Entity CharacterGhost;
-        public Entity SpectatorPrefab;
 
         public float SpawnPointBlockRadius;
+        public CollisionFilter SpawnPointCollisionFilter;
     }
 }

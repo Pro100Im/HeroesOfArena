@@ -64,7 +64,6 @@ namespace Global.Network.Connection
 
             Debug.Log("Looking for match...");
             UIManager.Update(UIKey.SearchingPopup, "Looking for match...");
-            //LoadingData.Instance.UpdateLoading(LoadingData.LoadingSteps.LookingForMatch);
 
             gameConnection.Session = await MultiplayerService.Instance.MatchmakeSessionAsync(match, options, cancellationToken);
             gameConnection.ConnectEndpoint = await networkHandler.ConnectEndpoint;

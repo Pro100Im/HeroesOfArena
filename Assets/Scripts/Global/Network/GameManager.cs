@@ -180,8 +180,6 @@ namespace Global.Network
             }
 
             // Connecting to a Multiplayer Session.
-            //LoadingData.Instance.UpdateLoading(LoadingData.LoadingSteps.InitializeConnection);
-
             switch (creationType)
             {
                 case CreationType.Create:
@@ -255,14 +253,11 @@ namespace Global.Network
         private void BeginEnteringGame()
         {
             _gameState = GlobalGameState.Loading;
-            //LoadingData.Instance.UpdateLoading(LoadingData.LoadingSteps.StartLoading);
         }
 
         private static void CreateEntityWorlds(ISession session, NetworkType connectionType,
             out World serverWorld, out World clientWorld)
         {
-            //LoadingData.Instance.UpdateLoading(LoadingData.LoadingSteps.CreateWorld);
-
             DestroyLocalSimulationWorld();
 
 #if UNITY_EDITOR

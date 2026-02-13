@@ -51,3 +51,6 @@ MonoBehaviour:
   CharacterGhost: {fileID: 1555240849038293811, guid: 134bce8efce352f46a6c6527fba526d0, type: 3}
   SpectatorPrefab: {fileID: 0}
   SpawnPointBlockRadius: 1
+  PlayerLayerMask:
+    serializedVersion: 2
+    m_Bits: 8
