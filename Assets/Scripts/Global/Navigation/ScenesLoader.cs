@@ -18,24 +18,20 @@ namespace Global.Navigation
             await LoadGameplayScenesAsync();
 
             if (server != null)
-                await WaitForAllSubScenesToLoadAsync(server/*, LoadingData.LoadingSteps.LoadServer*/);
+                await WaitForAllSubScenesToLoadAsync(server);
 
             if (client != null)
-                await WaitForAllSubScenesToLoadAsync(client/*, LoadingData.LoadingSteps.LoadClient*/);
+                await WaitForAllSubScenesToLoadAsync(client);
         }
 
         public static async Task UnloadGameplayScenesAsync()
         {
-            //LoadingData.Instance.UpdateLoading(LoadingData.LoadingSteps.UnloadingWorld);
-
             var gameplay = SceneManager.GetSceneByName(GameManager.GameSceneName);
             var resource = SceneManager.GetSceneByName(GameManager.ResourcesSceneName);
 
             if (gameplay.IsValid() && gameplay != SceneManager.GetActiveScene())
             {
                 var unloadScene = SceneManager.UnloadSceneAsync(gameplay);
-
-                UpdateLoadingStateAsync(/*LoadingData.LoadingSteps.UnloadingGameScene,*/ unloadScene);
 
                 await unloadScene;
             }
@@ -44,36 +40,30 @@ namespace Global.Navigation
             {
                 var unloadScene = SceneManager.UnloadSceneAsync(resource);
 
-                UpdateLoadingStateAsync(/*LoadingData.LoadingSteps.UnloadingResourcesScene,*/ unloadScene);
-
                 await unloadScene;
             }
         }
 
         private static async Task LoadGameplayScenesAsync()
         {
-            await LoadSceneAsync(GameManager.GameSceneName/*, LoadingData.LoadingSteps.LoadGameScene*/);
-            await LoadSceneAsync(GameManager.ResourcesSceneName/*, LoadingData.LoadingSteps.LoadResourcesScene*/);
+            await LoadSceneAsync(GameManager.GameSceneName);
+            await LoadSceneAsync(GameManager.ResourcesSceneName);
         }
 
-        private static async Task LoadSceneAsync(string sceneName/*, LoadingData.LoadingSteps step*/)
+        private static async Task LoadSceneAsync(string sceneName)
         {
             if (SceneManager.GetSceneByName(sceneName).isLoaded)
                 return;
 
             var sceneLoading = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
 
-            UpdateLoadingStateAsync(/*step,*/ sceneLoading);
-
             await sceneLoading;
         }
 
-        static async Task WaitForAllSubScenesToLoadAsync(World world/*, LoadingData.LoadingSteps step*/)
+        static async Task WaitForAllSubScenesToLoadAsync(World world)
         {
             if (world == null)
                 return;
-
-            //LoadingData.Instance.UpdateLoading(step);
 
             using var scenesQuery = world.EntityManager.CreateEntityQuery(ComponentType.ReadOnly<SceneReference>());
             using var scenesLeftToLoad = scenesQuery.ToEntityListAsync(Allocator.Persistent, out var handle);
@@ -94,20 +84,10 @@ namespace Global.Navigation
                         var numLoaded = count - scenesLeftToLoad.Length;
                         var loadingProgress = numLoaded / count;
 
-                        //LoadingData.Instance.UpdateLoading(step, loadingProgress);
                         i--;
                     }
                 }
 
-                await Awaitable.NextFrameAsync();
-            }
-        }
-
-        private static async void UpdateLoadingStateAsync(/*LoadingData.LoadingSteps step,*/ AsyncOperation loadingTask)
-        {
-            while (loadingTask != null && !loadingTask.isDone)
-            {
-                //LoadingData.Instance.UpdateLoading(step, loadingTask.progress);
                 await Awaitable.NextFrameAsync();
             }
         }

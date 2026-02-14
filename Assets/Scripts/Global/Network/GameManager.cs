@@ -91,7 +91,7 @@ namespace Global.Network
 
             var clientWorld = ClientServerBootstrap.CreateClientWorld("ClientWorld");
 
-            await ScenesLoader.LoadGameplayAsync(null, clientWorld);
+            await Task.Yield();
 
             _mainMenuSceneLoaded = true;
 
@@ -231,6 +231,8 @@ namespace Global.Network
 
             cancellationToken.ThrowIfCancellationRequested();
 
+            UIManager.Show(UIKey.LoadingScreen, "Loading...");
+            UIManager.Hide(UIKey.SearchingPopup);
             // Worlds are created and connected, game is ready to load and start.
             await ScenesLoader.LoadGameplayAsync(server, client);
 
@@ -315,8 +317,7 @@ namespace Global.Network
 
         private static async Task WaitForPlayerConnectionAsync(CancellationToken cancellationToken = default)
         {
-            UIManager.Show(UIKey.LoadingScreen, "Connecting to host...");
-            UIManager.Hide(UIKey.SearchingPopup);
+            UIManager.Update(UIKey.LoadingScreen, "Connecting to host...");
             // The GameManagerSystem is handling the connection/reconnection once the client world is created.
             ConnectionSettings.Instance.GameConnectionState = GameConnectionState.Connecting;
 
