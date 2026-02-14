@@ -1,6 +1,6 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/UI%20Toolkit/Global/GlobalStyle.uss?fileID=7433441132597879392&amp;guid=f0b50401ae793a440bdbacc20d05f547&amp;type=3#GlobalStyle"/>
-    <ui:VisualElement name="Canvas" picking-mode="Ignore" class="hide" style="flex-grow: 1; background-color: rgb(0, 0, 0); transition-duration: 0.2s; transition-property: opacity; transition-timing-function: ease-in; align-content: center; justify-content: center;">
+    <ui:VisualElement name="Canvas" picking-mode="Ignore" class="hide" style="flex-grow: 1; background-color: rgb(0, 0, 0); transition-duration: 0.3s; transition-property: opacity; transition-timing-function: linear; align-content: center; justify-content: center;">
         <ui:Label text="Label..." name="StatusText" picking-mode="Ignore" style="color: rgb(243, 235, 235); font-size: 40px; -unity-text-align: upper-center; align-self: auto; align-items: stretch;"/>
     </ui:VisualElement>
 </ui:UXML>
