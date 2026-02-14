@@ -58,12 +58,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c79d771cedb4794bf100ce60df5f764, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DefaultGhostMode: 2
-  SupportedGhostModes: 3
-  OptimizationMode: 0
-  Importance: 1
-  MaxSendRate: 0
-  prefabId: 8c22dcbefac332745a1efbea69cb8bfc
   HasOwner: 1
   SupportAutoCommandTarget: 1
   TrackInterpolationDelay: 1
@@ -72,6 +66,12 @@ MonoBehaviour:
   UseSingleBaseline: 0
   RollbackPredictedSpawnedGhostState: 0
   RollbackPredictionOnStructuralChanges: 1
+  DefaultGhostMode: 2
+  SupportedGhostModes: 3
+  OptimizationMode: 0
+  Importance: 1
+  MaxSendRate: 0
+  prefabId: 8c9043a1457467f4a885e8257bdd5237
 --- !u!114 &6729084813064277831
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -90,8 +90,8 @@ MonoBehaviour:
     PrefabType: -1
     SendTypeOptimization: -1
     VariantHash: 243651038875383252
-  - FullTypeName: Unity.Transforms.LocalTransform
+  - FullTypeName: Unity.NetCode.CommandDataInterpolationDelay
     EntityIndex: 0
-    PrefabType: -1
+    PrefabType: 7
     SendTypeOptimization: -1
-    VariantHash: 10188360468653526834
+    VariantHash: 0
