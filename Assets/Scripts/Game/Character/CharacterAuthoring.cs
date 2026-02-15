@@ -10,7 +10,7 @@ namespace Game.Character
         {
             public override void Bake(CharacterAuthoring authoring)
             {
-                var entity = GetEntity(TransformUsageFlags.None);
+                var entity = GetEntity(TransformUsageFlags.Dynamic);
 
                 AddComponent(entity, new Character());
                 AddComponent(entity, new CharacterInitialized());

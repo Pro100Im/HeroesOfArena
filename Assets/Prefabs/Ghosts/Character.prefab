@@ -106,7 +106,6 @@ GameObject:
   - component: {fileID: 3304333005748147725}
   - component: {fileID: 3630199105514099259}
   - component: {fileID: -4365052930481734055}
-  - component: {fileID: 1866597524963911456}
   m_Layer: 3
   m_Name: Character
   m_TagString: Untagged
@@ -235,28 +234,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.NetCode.Authoring.Hybrid::Unity.NetCode.Hybrid.GhostPresentationGameObjectAuthoring
   ServerPrefab: {fileID: 1803551892960696794, guid: 6d2f7469139ddd84c98fca4655555c4d, type: 3}
   ClientPrefab: {fileID: 1803551892960696794, guid: 6d2f7469139ddd84c98fca4655555c4d, type: 3}
---- !u!95 &1866597524963911456
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1555240849038293811}
-  m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: 019df69c9b13e46409c3490b3c31dfb8, type: 3}
-  m_Controller: {fileID: 9100000, guid: bbf9d7bd592c5ac4eb838918c1eb8c3e, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &3645069364783140298
 GameObject:
   m_ObjectHideFlags: 0
