@@ -543,6 +543,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8852000545635829720}
+  - component: {fileID: 8044309950502085521}
+  - component: {fileID: 5492213162344361259}
+  - component: {fileID: 8695579776284162673}
   m_Layer: 0
   m_Name: Knight
   m_TagString: Untagged
@@ -567,6 +570,55 @@ Transform:
   - {fileID: 6138664879907344392}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8044309950502085521
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1803551892960696794}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0199cca95a2e14d5883379f33cc211e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.NetCode.Hybrid::Unity.NetCode.Hybrid.GhostPresentationGameObjectEntityOwner
+--- !u!95 &5492213162344361259
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1803551892960696794}
+  m_Enabled: 1
+  m_Avatar: {fileID: 9000000, guid: 019df69c9b13e46409c3490b3c31dfb8, type: 3}
+  m_Controller: {fileID: 9100000, guid: bbf9d7bd592c5ac4eb838918c1eb8c3e, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &8695579776284162673
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1803551892960696794}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a6ecc053bb3d480d902deff8d7abe9b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.NetCode.Hybrid::Unity.NetCode.Hybrid.GhostAnimationController
+  AnimationGraphAsset: {fileID: 11400000, guid: 73711324f9a3c6649b089faa4ec375da, type: 2}
+  EvaluateGraphInPrediction: 0
+  IgnoreEvents: 0
 --- !u!1 &1926603946943281787
 GameObject:
   m_ObjectHideFlags: 0
