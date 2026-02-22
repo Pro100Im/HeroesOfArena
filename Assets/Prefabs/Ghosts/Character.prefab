@@ -232,7 +232,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 725f443b46fd3448e9c957fb78798883, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.NetCode.Authoring.Hybrid::Unity.NetCode.Hybrid.GhostPresentationGameObjectAuthoring
-  ServerPrefab: {fileID: 1803551892960696794, guid: 6d2f7469139ddd84c98fca4655555c4d, type: 3}
+  ServerPrefab: {fileID: 1803551892960696794, guid: 5a07d206c380f25489c8b3ee35d26ae9, type: 3}
   ClientPrefab: {fileID: 1803551892960696794, guid: 6d2f7469139ddd84c98fca4655555c4d, type: 3}
 --- !u!1 &3645069364783140298
 GameObject:
